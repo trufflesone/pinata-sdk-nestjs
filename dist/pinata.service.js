@@ -27,12 +27,18 @@ let PinataService = class PinataService {
     }
     pinFile(file) {
         const url = `${this.baseUrl}/pinning/pinFileToIPFS`;
-        const headers = Object.assign(Object.assign({}, this.getAuthHeaders()), { "Content-Type": "application/octet-stream" });
+        const headers = {
+            ...this.getAuthHeaders(),
+            "Content-Type": "application/octet-stream",
+        };
         return this.httpService.post(url, file, { headers });
     }
     pinJSON(json) {
         const url = `${this.baseUrl}/pinning/pinJSONToIPFS`;
-        const headers = Object.assign(Object.assign({}, this.getAuthHeaders()), { "Content-Type": "application/json" });
+        const headers = {
+            ...this.getAuthHeaders(),
+            "Content-Type": "application/json",
+        };
         return this.httpService.post(url, json, { headers });
     }
     unpin(hash) {
@@ -51,4 +57,3 @@ PinataService = __decorate([
     __metadata("design:paramtypes", [axios_1.HttpService, String, String])
 ], PinataService);
 exports.PinataService = PinataService;
-//# sourceMappingURL=pinata.service.js.map

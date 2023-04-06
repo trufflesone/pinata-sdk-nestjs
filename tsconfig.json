@@ -1,17 +1,19 @@
 {
-    "compilerOptions": {
-      "module": "commonjs",
-      "declaration": true,
-      "removeComments": true,
-      "emitDecoratorMetadata": true,
-      "experimentalDecorators": true,
-      "esModuleInterop": true,
-      "target": "es2017",
-      "sourceMap": true,
-      "outDir": "./dist",
-      "baseUrl": ".",
-      "incremental": true
-    },
-    "exclude": ["node_modules", "dist"]
-  }
-  
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "ES2018",
+    "declaration": true,
+    "noImplicitAny": false,
+    "removeComments": true,
+    "noLib": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "sourceMap": false,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*", "../index.ts"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
+}

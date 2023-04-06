@@ -25,7 +25,6 @@ let PinataModule = PinataModule_1 = class PinataModule {
             exports: [pinata_service_1.PinataService],
         };
     }
-    ;
     static forRootAsync(options) {
         return {
             module: PinataModule_1,
@@ -37,7 +36,9 @@ let PinataModule = PinataModule_1 = class PinataModule {
                         const { apiKey, secretKey } = await options.useFactory(...args);
                         return new pinata_service_1.PinataService(httpService, apiKey, secretKey);
                     },
-                    inject: options.inject ? [axios_1.HttpService, ...options.inject] : [axios_1.HttpService],
+                    inject: options.inject
+                        ? [axios_1.HttpService, ...options.inject]
+                        : [axios_1.HttpService],
                 },
             ],
             exports: [pinata_service_1.PinataService],
@@ -48,4 +49,3 @@ PinataModule = PinataModule_1 = __decorate([
     (0, common_1.Module)({})
 ], PinataModule);
 exports.PinataModule = PinataModule;
-//# sourceMappingURL=pinata.module.js.map
