@@ -6,8 +6,8 @@ export declare class PinataService {
     private httpService;
     private readonly apiKey;
     private readonly secretKey;
-    private readonly baseUrl;
-    constructor(httpService: HttpService, apiKey: string, secretKey: string);
+    private readonly gatewayUrl;
+    constructor(httpService: HttpService, apiKey: string, secretKey: string, gatewayUrl: string);
     private getAuthHeaders;
     pinFile(file: Buffer): Observable<AxiosResponse>;
     pinJSON(json: any): Observable<AxiosResponse>;

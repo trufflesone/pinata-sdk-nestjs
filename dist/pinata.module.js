@@ -12,36 +12,37 @@ const common_1 = require("@nestjs/common");
 const axios_1 = require("@nestjs/axios");
 const pinata_service_1 = require("./pinata.service");
 let PinataModule = PinataModule_1 = class PinataModule {
-    static forRoot(apiKey, secretKey) {
+    static forRoot(options) {
         return {
             module: PinataModule_1,
             imports: [axios_1.HttpModule],
             providers: [
                 {
                     provide: pinata_service_1.PinataService,
-                    useFactory: (httpService) => new pinata_service_1.PinataService(httpService, apiKey, secretKey),
+                    useFactory: (httpService) => new pinata_service_1.PinataService(httpService, options.apiKey, options.gatewayUrl, options.secretKey),
                 },
             ],
             exports: [pinata_service_1.PinataService],
         };
     }
-    static forRootAsync(options) {
+    static async forRootAsync(options) {
+        const providers = [
+            {
+                provide: pinata_service_1.PinataService,
+                useFactory: async (httpService, ...args) => {
+                    const { apiKey, secretKey, gatewayUrl } = await options.useFactory(...args);
+                    return new pinata_service_1.PinataService(httpService, apiKey, gatewayUrl, secretKey);
+                },
+                inject: options.inject
+                    ? [axios_1.HttpService, ...options.inject]
+                    : [axios_1.HttpService],
+            },
+        ];
         return {
             module: PinataModule_1,
             imports: [axios_1.HttpModule],
-            providers: [
-                {
-                    provide: pinata_service_1.PinataService,
-                    useFactory: async (httpService, ...args) => {
-                        const { apiKey, secretKey } = await options.useFactory(...args);
-                        return new pinata_service_1.PinataService(httpService, apiKey, secretKey);
-                    },
-                    inject: options.inject
-                        ? [axios_1.HttpService, ...options.inject]
-                        : [axios_1.HttpService],
-                },
-            ],
-            exports: [pinata_service_1.PinataService],
+            providers,
+            exports: providers,
         };
     }
 };

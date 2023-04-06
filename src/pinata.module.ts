@@ -1,18 +1,14 @@
 import { Module, DynamicModule, Provider } from "@nestjs/common";
 import { HttpModule, HttpService } from "@nestjs/axios";
 import { PinataService } from "./pinata.service";
+import {
+  PinataModuleAsyncOptions,
+  PinataModuleOptions,
+} from "./pinata.interface";
 
-export interface PinataModuleAsyncOptions {
-  useFactory: (
-    ...args: any[]
-  ) =>
-    | Promise<{ apiKey: string; secretKey: string }>
-    | { apiKey: string; secretKey: string };
-  inject?: any[];
-}
 @Module({})
 export class PinataModule {
-  static forRoot(apiKey: string, secretKey: string): DynamicModule {
+  static forRoot(options: PinataModuleOptions): DynamicModule {
     return {
       module: PinataModule,
       imports: [HttpModule],
@@ -20,29 +16,41 @@ export class PinataModule {
         {
           provide: PinataService,
           useFactory: (httpService) =>
-            new PinataService(httpService, apiKey, secretKey),
+            new PinataService(
+              httpService,
+              options.apiKey,
+              options.gatewayUrl,
+              options.secretKey
+            ),
         },
       ],
       exports: [PinataService],
     };
   }
-  static forRootAsync(options: PinataModuleAsyncOptions): DynamicModule {
+
+  static async forRootAsync(
+    options: PinataModuleAsyncOptions
+  ): Promise<DynamicModule> {
+    const providers: Provider[] = [
+      {
+        provide: PinataService,
+        useFactory: async (httpService: HttpService, ...args: any[]) => {
+          const { apiKey, secretKey, gatewayUrl } = await options.useFactory(
+            ...args
+          );
+          return new PinataService(httpService, apiKey, gatewayUrl, secretKey);
+        },
+        inject: options.inject
+          ? [HttpService, ...options.inject]
+          : [HttpService],
+      },
+    ];
+
     return {
       module: PinataModule,
       imports: [HttpModule],
-      providers: [
-        {
-          provide: PinataService,
-          useFactory: async (httpService: HttpService, ...args: any[]) => {
-            const { apiKey, secretKey } = await options.useFactory(...args);
-            return new PinataService(httpService, apiKey, secretKey);
-          },
-          inject: options.inject
-            ? [HttpService, ...options.inject]
-            : [HttpService],
-        },
-      ],
-      exports: [PinataService],
+      providers,
+      exports: providers,
     };
   }
 }

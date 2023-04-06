@@ -13,11 +13,11 @@ exports.PinataService = void 0;
 const common_1 = require("@nestjs/common");
 const axios_1 = require("@nestjs/axios");
 let PinataService = class PinataService {
-    constructor(httpService, apiKey, secretKey) {
+    constructor(httpService, apiKey, secretKey, gatewayUrl) {
         this.httpService = httpService;
-        this.baseUrl = "https://api.pinata.cloud";
         this.apiKey = apiKey;
         this.secretKey = secretKey;
+        this.gatewayUrl = gatewayUrl;
     }
     getAuthHeaders() {
         return {
@@ -26,7 +26,7 @@ let PinataService = class PinataService {
         };
     }
     pinFile(file) {
-        const url = `${this.baseUrl}/pinning/pinFileToIPFS`;
+        const url = `${this.gatewayUrl}/pinning/pinFileToIPFS`;
         const headers = {
             ...this.getAuthHeaders(),
             "Content-Type": "application/octet-stream",
@@ -34,7 +34,7 @@ let PinataService = class PinataService {
         return this.httpService.post(url, file, { headers });
     }
     pinJSON(json) {
-        const url = `${this.baseUrl}/pinning/pinJSONToIPFS`;
+        const url = `${this.gatewayUrl}/pinning/pinJSONToIPFS`;
         const headers = {
             ...this.getAuthHeaders(),
             "Content-Type": "application/json",
@@ -42,18 +42,18 @@ let PinataService = class PinataService {
         return this.httpService.post(url, json, { headers });
     }
     unpin(hash) {
-        const url = `${this.baseUrl}/pinning/unpin/${hash}`;
+        const url = `${this.gatewayUrl}/pinning/unpin/${hash}`;
         const headers = this.getAuthHeaders();
         return this.httpService.delete(url, { headers });
     }
     getPinnedItems() {
-        const url = `${this.baseUrl}/data/pinList`;
+        const url = `${this.gatewayUrl}/data/pinList`;
         const headers = this.getAuthHeaders();
         return this.httpService.get(url, { headers });
     }
 };
 PinataService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [axios_1.HttpService, String, String])
+    __metadata("design:paramtypes", [axios_1.HttpService, String, String, String])
 ], PinataService);
 exports.PinataService = PinataService;

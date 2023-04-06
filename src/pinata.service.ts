@@ -7,15 +7,17 @@ import { Observable } from "rxjs";
 export class PinataService {
   private readonly apiKey: string;
   private readonly secretKey: string;
-  private readonly baseUrl: string = "https://api.pinata.cloud";
+  private readonly gatewayUrl: string;
 
   constructor(
     private httpService: HttpService,
     apiKey: string,
-    secretKey: string
+    secretKey: string,
+    gatewayUrl: string
   ) {
     this.apiKey = apiKey;
     this.secretKey = secretKey;
+    this.gatewayUrl = gatewayUrl;
   }
 
   private getAuthHeaders(): Record<string, string> {
@@ -26,7 +28,7 @@ export class PinataService {
   }
 
   public pinFile(file: Buffer): Observable<AxiosResponse> {
-    const url = `${this.baseUrl}/pinning/pinFileToIPFS`;
+    const url = `${this.gatewayUrl}/pinning/pinFileToIPFS`;
     const headers = {
       ...this.getAuthHeaders(),
       "Content-Type": "application/octet-stream",
@@ -36,7 +38,7 @@ export class PinataService {
   }
 
   public pinJSON(json: any): Observable<AxiosResponse> {
-    const url = `${this.baseUrl}/pinning/pinJSONToIPFS`;
+    const url = `${this.gatewayUrl}/pinning/pinJSONToIPFS`;
     const headers = {
       ...this.getAuthHeaders(),
       "Content-Type": "application/json",
@@ -46,14 +48,14 @@ export class PinataService {
   }
 
   public unpin(hash: string): Observable<AxiosResponse> {
-    const url = `${this.baseUrl}/pinning/unpin/${hash}`;
+    const url = `${this.gatewayUrl}/pinning/unpin/${hash}`;
     const headers = this.getAuthHeaders();
 
     return this.httpService.delete(url, { headers });
   }
 
   public getPinnedItems(): Observable<AxiosResponse> {
-    const url = `${this.baseUrl}/data/pinList`;
+    const url = `${this.gatewayUrl}/data/pinList`;
     const headers = this.getAuthHeaders();
 
     return this.httpService.get(url, { headers });
